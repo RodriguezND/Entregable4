@@ -1,0 +1,67 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+</head>
+<body>
+
+<table class="default" border="1px solid black" >
+
+  <% if(hayProductos) { %>
+    <% for(let i=0; i < productos.length; i++) { %>
+    <tr>
+      <th><%= productos[i].nombre %></th>
+    
+            <td> ID: <%= productos[i].id %> </br>
+                Timestamp: <%= productos[i].timestamp %></br>
+                
+                Descripcion: <%= productos[i].descripcion %></br>
+                Codigo: <%= productos[i].codigo %></br>
+                Precio: <%= productos[i].precio %></br>
+                Stock: <%= productos[i].stock %></br>
+                Imagen: <img src= " <%= productos[i].foto %> "
+            </td></br>
+    </tr>
+    <% } %>
+    <% } else { %>
+
+        <h1>No hay productos</h1>
+
+<% } %>
+
+  </table>
+  
+  <br>
+
+  <!-- <form action="/api/carrito" method="post">
+
+    <label for="id">Ingresa el ID del producto que desea agregar al Carrito:</label>
+    <input type="text" name="id" id="id">
+
+
+    <input type="submit" value="Enviar">        
+    
+  </form> -->
+
+  <form action="/api/carrito" method="POST">
+
+    <label for="id">Nuevo Carrito</label>
+
+    <input type="submit" value="Crear">        
+    
+  </form>
+
+
+
+
+  <br>
+  
+  <a href="/api/productos/formulario" >Nuevo Producto</a>
+
+      
+</body>
+</html>

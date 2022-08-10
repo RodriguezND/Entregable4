@@ -1,0 +1,83 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+</head>
+<body>
+
+    <h1>CARRITO con ID: <%= idcarrito %> </h1>
+
+
+    <table class="default" border="1px solid black" >
+
+        <tr>
+          <th>ID</th>
+          <th>Nombre</th>
+          <th>Descripcion</th>
+          <th>Codigo</th>
+          <th>Precio</th>
+          <th>Stock</th>
+          <th>Imagen</th>
+        </tr>
+      
+            <% for(let i=0; i < carrito.length; i++) { %>
+                <tr>
+                    <td> <%= carrito[i].id %></td>
+                    <td> <%= carrito[i].nombre %></td>
+                    <td> <%= carrito[i].descripcion %></td>
+                    <td> <%= carrito[i].codigo %></td>
+                    <td> <%= carrito[i].precio %></td>
+                    <td> <%= carrito[i].stock %></td>
+                    <td> <img src= " <%= carrito[i].foto %> "</td>
+                </tr>
+            <% } %>
+    
+      
+      </table>
+
+
+      <br>
+       <!-- <form action="/api/carrito/productos" method="post">
+
+        <label for="id">Ingresa el ID del producto que desea agregar al Carrito:</label>
+        <input type="text" name="id" id="id">
+
+
+        <input type="submit" value="Enviar">        
+        
+    </form> -->
+
+      <h1>LISTA DE PRODUCTOS</h1>
+
+      <table class="default" border="1px solid black" >
+
+        
+          <% for(let i=0; i < productos.length; i++) { %>
+          <tr>
+            <th><%= productos[i].nombre %></th>
+          
+                  <td> ID: <%= productos[i].id %> </br>
+                      Timestamp: <%= productos[i].timestamp %></br>
+                      
+                      Descripcion: <%= productos[i].descripcion %></br>
+                      Codigo: <%= productos[i].codigo %></br>
+                      Precio: <%= productos[i].precio %></br>
+                      Stock: <%= productos[i].stock %></br>
+                      Imagen: <img src= " <%= productos[i].foto %> "
+                  </td></br>
+          </tr>
+          <% } %>
+         
+      
+        </table>
+
+
+
+
+      <a href="/api/productos" >Volver</a>
+
+</body>
+</html>

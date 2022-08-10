@@ -1,20 +1,29 @@
 const express = require("express");
 const productos = require("./productos.js")
+const carrito = require("./carrito.js")
 
 const app = express();
+
+let admin = false
 
 app.use(express.json())
 app.use(express.urlencoded({extended:true}))
 
-app.use("/api", productos)
+app.set('view engine', 'ejs')
 
-app.use("/formulario", express.static("public"))
+app.use("/api/carrito", carrito)
+app.use("/api/productos", productos)
+
+
+app.use("/public", express.static("public"))
  
-const server = app.listen(8080, () => {
+const server = app.listen(process.env.PORT || 8080, () => {
 
     console.log("Servidor ok puerto 8080")
 
 })
 
 server.on("ERROR", error => console.log(`Error en el servidor ${error}`))
+
+
 
