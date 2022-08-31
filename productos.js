@@ -1,6 +1,14 @@
+/* import ProductosDaoArchivo from "./src/daos/productos/ProductosDaoArchivos"
+ */
+const ProductosDaoFirebase = require("./src/daos/productos/ProductosDaoFirebase");
+const ProductosDaoMemoria = require("./src/daos/productos/ProductosDaoMemoria");
+const ProductosDaoMongo = require("./src/daos/productos/ProductosDaoMongoDb")
+const ProductosDaoArchivo = require("./src/daos/productos/ProductosDaoArchivos")
 const express = require("express");
 const server = require("./server.js")
 const fs = require("fs");
+const { off } = require("process");
+
 const { Router } = express;
 
 const router = Router();
@@ -8,174 +16,256 @@ const router = Router();
 const productosArchivo = "./productos.txt"
 let hayProductos = false
 
-let admin = false
+/*  
+    const BD = 1 => ARCHIVO
+    const BD = 2 => MONGO 
+    const BD = 3 => FIREBASE
+    const BD = 4 => MEMORIA
+*/
+
+const BD = 4
+
+const proArchivo = new ProductosDaoArchivo()
+const proMongo = new ProductosDaoMongo()
+const proFirebase = new ProductosDaoFirebase()
+const proMemoria = new ProductosDaoMemoria()
+
+/* proMongo.connectar() */
+
+
+/* proFirebase.connectar() */
+
+
+let admin = true
+
 
 //GET FORMULARIO
 router.get("/formulario", (req,res) => {
 
+
     if(admin)
     {
-        fs.promises.readFile(productosArchivo, "utf-8")
-        .then( contenido => {
+        if(BD== 1){
 
-            let productoJson = JSON.parse(contenido)
+            //--------------------------------BD ARCHIVO
+            console.log("BASE DE DATOS ARCHIVO")
+            proArchivo.getAll().then(objetoLoco => {
 
-            console.log(productoJson)
-
-            if(productoJson.length > 0)
+            if(objetoLoco.length > 0)
             {
+                console.log(objetoLoco)
                 hayProductos = true
-                res.render("formulario.ejs", {productos:productoJson,hayProductos: hayProductos})
+                res.render("formulario.ejs", {productos:objetoLoco,hayProductos: hayProductos})
 
             } else {
                 
                 res.render("formulario.ejs", {hayProductos: hayProductos})
             }
 
-        })
-    .catch(error => {
+            })
+            .catch(error => {
 
-        return console.log("Error", error)
-    })
+                return console.log("Error", error)
+            })
+            //--------------------------------BD ARCHIVO
+
+        }
+        else if(BD == 2){
+            //--------------------------------BD MONGO
+            proMongo.connectar()
+            console.log("BASE DE DATOS MONGO")
+            productoJson = proMongo.getAll()
+            hayProductos = true
+
+            res.render("formulario.ejs", {productos:productoJson,hayProductos: hayProductos})
+
+            //--------------------------------BD MONGO
+        }
+        else if(BD == 3){
+            //--------------------------------BD FIREBASE
+            proFirebase.connectar()
+            console.log("BASE DE DATOS FIREBASE")
+            productoJson = proFirebase.getAll()
+            hayProductos = true
+
+            res.render("formulario.ejs", {productos:productoJson,hayProductos: hayProductos})
+
+            //--------------------------------BD FIREBASE
+        }else if(BD == 4){
+            //--------------------------------BD MEMORIA
+            productoJson =proMemoria.getAll()
+            hayProductos = true
+
+            res.render("formulario.ejs", {productos:productoJson,hayProductos: hayProductos})
+            //--------------------------------BD MEMORIA
+        }
+        
     } else {
 
         res.json({ error : -1, descripcion: "ruta '/formulario' método 'Nuevo Producto' no autorizada" })
     }
-        
 
 })
-
 
 //GET: '/:id?'
 router.get("/", (req,res) => {
 
-    fs.promises.readFile(productosArchivo, "utf-8")
-    .then( contenido => {
+    if(BD==1){
+            //--------------------------------BD ARCHIVO
+            proArchivo.getAll().then(objetoLoco => {
 
-        let productoJson = JSON.parse(contenido)
+            if(objetoLoco.length > 0)
+            {
+                hayProductos = true
 
-        console.log(productoJson)
+                console.log(objetoLoco)
 
-        if(productoJson.length > 0)
-        {
-            hayProductos = true
-            res.render("index.ejs", {productos:productoJson,hayProductos: hayProductos})
+                res.render("index.ejs", {productos:objetoLoco,hayProductos: hayProductos})
 
-        } else {
-            
-            res.render("index.ejs", {hayProductos: hayProductos})
-        }
+            } else {
+                
+                res.render("index.ejs", {hayProductos: hayProductos})
+            }
 
-    })
-    .catch(error => {
+            })
+        //--------------------------------BD ARCHIVO
+    }else if(BD == 2){
 
-        return console.log("Error", error)
-    })
-    
+        //--------------------------------BD MONGO
+        proMongo.connectar() 
+        console.log("BASE DE DATOS MONGO")
+        proMongo.getAll().then(objetoLoco => {
 
+            if(objetoLoco.length > 0)
+            {
+                hayProductos = true
+
+                console.log(objetoLoco)
+
+                res.render("index.ejs", {productos:objetoLoco,hayProductos: hayProductos})
+
+            } else {
+                
+                res.render("index.ejs", {hayProductos: hayProductos})
+            }
+
+        })
+        //--------------------------------BD MONGO
+    }else if(BD == 3){
+
+        //--------------------------------BD FIREBASE
+        proFirebase.connectar()
+        console.log("BASE DE DATOS FIREBASE")
+        proFirebase.getAll().then(objetoLoco => {
+
+            if(objetoLoco.length > 0)
+            {
+                hayProductos = true
+
+                console.log(objetoLoco)
+
+                res.render("index.ejs", {productos:objetoLoco,hayProductos: hayProductos})
+
+            } else {
+                
+                res.render("index.ejs", {hayProductos: hayProductos})
+            }
+
+        })
+        //--------------------------------BD FIREBASE
+
+    }else if(BD == 4){
+        //--------------------------------BD MEMORIA
+        proMemoria.getAll().then(objetoLoco => {
+
+            if(objetoLoco.length > 0)
+            {
+                hayProductos = true
+
+                console.log(objetoLoco)
+
+                res.render("index.ejs", {productos:objetoLoco,hayProductos: hayProductos})
+
+            } else {
+                
+                res.render("index.ejs", {hayProductos: hayProductos})
+            }
+
+        })
+        //--------------------------------BD MEMORIA
+
+
+    }
+        
 
 })
 
 router.get("/:id?", (req,res) => {
 
     const id = req.params.id;
+    //--------------------------------BD ARCHIVO
+    proArchivo.getById(id).then(obj => {
 
-    fs.promises.readFile(productosArchivo, "utf-8")
-    .then( contenido => {
+        let produ = [obj]
 
-        let productoJson = JSON.parse(contenido)
+        hayProductos = true 
 
-        if(productoJson.length > 0)
-        {
-            for(let i=0;i<productoJson.length;i++)
-            {
-            if(productoJson[i].id == id){     
+        res.render("index.ejs", {productos:produ,hayProductos: hayProductos})
+        return
 
-                const produ = [productoJson[i]]
-
-                res.render("index.ejs", {productos:produ,hayProductos: hayProductos})
-                return
-            } 
-            } 
-
-        } else {
-            
-            res.render("index.ejs", {hayProductos: hayProductos})
-        }
     })
-    .catch(error => {
+    //--------------------------------BD ARCHIVO
 
-        return console.log("Error", error)
-    })
-
-
-    
 })
-
 
 // POST: '/'
 router.post("/", (req, res) => {
     if(admin)
     {
-    fs.promises.readFile(productosArchivo, "utf-8")
-    .then( contenido => {
-        let productoJson = JSON.parse(contenido)
-
-
-        if(productoJson.length == 0){
-
+        if(BD== 2){
+        //--------------------------------BD MONGO
+            proMongo.connectar() 
             const productoNuevo = req.body
 
             hayProductos = true
+
+            proMongo.save(productoNuevo)
+
+            productoJson = proMongo.getAll()
+
+            res.render("index.ejs", {productos:productoJson,hayProductos: hayProductos})
+            //--------------------------------BD MONGO
+
+        }else if(BD == 3){
             
-            productoNuevo.id = 1 
+            //--------------------------------BD FIREBASE
+            proFirebase.connectar()
+            const productoNuevo = req.body
 
-            productoNuevo.timestamp = Date.now()
+            hayProductos = true
 
-            productoJson.push(productoNuevo)
+            proFirebase.save(productoNuevo)
 
-            /*Escribe en el archivo Producto */
-            let productoString = JSON.stringify(productoJson, null, productoJson.length);
-
-            fs.promises.writeFile(productosArchivo, productoString)
-            /* ************* */
+            productoJson = proFirebase.getAll()
 
             res.render("index.ejs", {productos:productoJson,hayProductos: hayProductos})
 
-        }
-        else{
-
-            const cantidad = productoJson.length
-
-            const productoUltimo = productoJson[cantidad-1]
+            //--------------------------------BD FIREBASE
+        }else if(BD == 4){
 
             const productoNuevo = req.body
-            
-            productoNuevo.id = productoUltimo.id +1 
-
-            productoNuevo.timestamp = Date.now()
-
-            productoJson.push(productoNuevo)
-
-            /*Escribe en el archivo Producto */
-            let productoString = JSON.stringify(productoJson, null, productoJson.length);
-
-            fs.promises.writeFile(productosArchivo, productoString)
-            /* ************* */
+            hayProductos = true
+            proMemoria.save(productoNuevo)
+            productoJson = proMemoria.getAll()
 
             res.render("index.ejs", {productos:productoJson,hayProductos: hayProductos})
+
         }
-
-    })
-    .catch( error => {
-
-        return console.log("Error", error)
-
-    })
+     
     } else{
         res.json({ error : -1, descripcion: "ruta '/' método 'Agregar Producto' no autorizada" })
     }
-    
+        
 
 })
 

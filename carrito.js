@@ -8,8 +8,6 @@ const productosArchivo = "./productos.txt"
 const carritoArchivo = "./carrito.txt"
 let hayCarrito = false
 
-
-
 //GET CARRITO
 /* router.get("/", (req,res) => {
     

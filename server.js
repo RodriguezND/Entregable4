@@ -4,7 +4,6 @@ const carrito = require("./carrito.js")
 
 const app = express();
 
-let admin = false
 
 app.use(express.json())
 app.use(express.urlencoded({extended:true}))
